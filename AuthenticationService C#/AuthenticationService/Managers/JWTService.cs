@@ -1,9 +1,11 @@
 ﻿using System;
-using System.Security.Claims;
 using System.Collections.Generic;
-using AuthenticationService.Models;
-using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Security.Cryptography.X509Certificates;
+using AuthenticationService.Models;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AuthenticationService.Managers
 {
@@ -14,6 +16,12 @@ namespace AuthenticationService.Managers
         /// The secret key we use to encrypt out token with.
         /// </summary>
         public string SecretKey { get; set; }
+
+        X509Certificate2 certificate = new X509Certificate2(@"C:\Users\harsi\Desktop\Azure - CDH\privatekey-9650.pfx", "Pass-123", X509KeyStorageFlags.PersistKeySet);
+
+        //JwtSecurityTokenHandler jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
+        JsonWebTokenHandler jsontoken = new JsonWebTokenHandler();
+
         #endregion
 
         #region Constructor
@@ -34,12 +42,12 @@ namespace AuthenticationService.Managers
             if (string.IsNullOrEmpty(token))
                 throw new ArgumentException("Given token is null or empty.");
 
+            var jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
             TokenValidationParameters tokenValidationParameters = GetTokenValidationParameters();
-
-            JwtSecurityTokenHandler jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
             try
             {
                 ClaimsPrincipal tokenValid = jwtSecurityTokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
+                //var valid = jsontoken.ValidateToken(token, tokenValidationParameters);
                 return true;
             }
             catch (Exception)
@@ -50,26 +58,32 @@ namespace AuthenticationService.Managers
 
         /// <summary>
         /// Generates token by given model.
-        /// Validates whether the given model is valid, then gets the symmetric key.
+        /// Validates whether the given model is valid, then gets the assymmetric private key.
         /// Encrypt the token and returns it.
         /// </summary>
         /// <param name="model"></param>
         /// <returns>Generated token.</returns>
         public string GenerateToken(IAuthContainerModel model)
         {
-            if (model == null || model.Claims == null || model.Claims.Length == 0)
+            if (model == null || model.Claims == null || model.Claims.Length == 0 || model.SecretKey == null)
                 throw new ArgumentException("Arguments to create token are not valid.");
+
 
             SecurityTokenDescriptor securityTokenDescriptor = new SecurityTokenDescriptor
             {
+                Audience = "Audience",
+                Issuer = "Issuer",
+                AdditionalHeaderClaims = new Dictionary<string, object>() { { "x5ts", SecretKey } },
+                NotBefore = DateTime.Now,
+                Expires = DateTime.Now.AddMinutes(Convert.ToInt32(model.ExpireMinutes)),
                 Subject = new ClaimsIdentity(model.Claims),
-                Expires = DateTime.UtcNow.AddMinutes(Convert.ToInt32(model.ExpireMinutes)),
-                SigningCredentials = new SigningCredentials(GetSymmetricSecurityKey(), model.SecurityAlgorithm)
+                SigningCredentials = new SigningCredentials(GetPrivateKeyfromCertificate(), model.SecurityAlgorithm)
             };
 
-            JwtSecurityTokenHandler jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
-            SecurityToken securityToken = jwtSecurityTokenHandler.CreateToken(securityTokenDescriptor);
-            string token = jwtSecurityTokenHandler.WriteToken(securityToken);
+            //var securityToken = jwtSecurityTokenHandler.CreateToken(securityTokenDescriptor);
+            //string token = jwtSecurityTokenHandler.WriteToken(securityToken);
+
+            var token = jsontoken.CreateToken(securityTokenDescriptor);
 
             return token;
         }
@@ -88,12 +102,11 @@ namespace AuthenticationService.Managers
                 throw new ArgumentException("Given token is null or empty.");
 
             TokenValidationParameters tokenValidationParameters = GetTokenValidationParameters();
-
-            JwtSecurityTokenHandler jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
             try
             {
-                ClaimsPrincipal tokenValid = jwtSecurityTokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
-                return tokenValid.Claims;
+                //ClaimsPrincipal tokenValid = jwtSecurityTokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
+                var tokenValid = jsontoken.ValidateToken(token, tokenValidationParameters);
+                return tokenValid.ClaimsIdentity.Claims;
             }
             catch (Exception ex)
             {
@@ -103,19 +116,32 @@ namespace AuthenticationService.Managers
         #endregion
 
         #region Private Methods
-        private SecurityKey GetSymmetricSecurityKey()
+        private RsaSecurityKey GetPrivateKeyfromCertificate()
         {
-            byte[] symmetricKey = Convert.FromBase64String(SecretKey);
-            return new SymmetricSecurityKey(symmetricKey);
+            // create the token signed with private key
+            // 1. create private security key to create the token
+            var rsaPrivateKey = certificate.GetRSAPrivateKey();
+            var privateSecurityKey = new RsaSecurityKey(rsaPrivateKey);
+
+            return privateSecurityKey;
         }
 
+        private RsaSecurityKey GetPublicKeyfromCertificate()
+        {
+            var rsaPublicKey = certificate.GetRSAPublicKey();
+            var publicSecurityKey = new RsaSecurityKey(rsaPublicKey);
+            return publicSecurityKey;
+        }
+
+        // Validate Token
         private TokenValidationParameters GetTokenValidationParameters()
         {
             return new TokenValidationParameters()
             {
-                ValidateIssuer = false,
-                ValidateAudience = false,
-                IssuerSigningKey = GetSymmetricSecurityKey()
+                ValidAudience = "Audience",
+                ValidIssuer = "Issuer",
+                RequireSignedTokens = true,
+                IssuerSigningKey = GetPublicKeyfromCertificate()
             };
         }
         #endregion

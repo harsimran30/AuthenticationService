@@ -1,9 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
-using System.Collections.Generic;
-using AuthenticationService.Models;
 using AuthenticationService.Managers;
+using AuthenticationService.Models;
 
 namespace AuthenticationService
 {
@@ -11,7 +11,7 @@ namespace AuthenticationService
     {
         static void Main(string[] args)
         {
-            IAuthContainerModel model = GetJWTContainerModel("Moshe Binieli", "mmoshikoo@gmail.com");
+            IAuthContainerModel model = GetJWTContainerModel("Harsimran Singh", "hsingh@dhcsystems.com.au");
             IAuthService authService = new JWTService(model.SecretKey);
 
             string token = authService.GenerateToken(model);
@@ -20,10 +20,13 @@ namespace AuthenticationService
                 throw new UnauthorizedAccessException();
             else
             {
+                Console.WriteLine("JSON :\n" + token);
+                Console.WriteLine();
                 List<Claim> claims = authService.GetTokenClaims(token).ToList();
 
-                Console.WriteLine(claims.FirstOrDefault(e => e.Type.Equals(ClaimTypes.Name)).Value);
+                Console.WriteLine(claims.FirstOrDefault(e => e.Type.Equals(ClaimTypes.GivenName)).Value);
                 Console.WriteLine(claims.FirstOrDefault(e => e.Type.Equals(ClaimTypes.Email)).Value);
+                Console.ReadLine();
             }
         }
 
@@ -34,8 +37,9 @@ namespace AuthenticationService
             {
                 Claims = new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, name),
-                    new Claim(ClaimTypes.Email, email)
+                    new Claim(ClaimTypes.GivenName, name),
+                    new Claim(ClaimTypes.Email, email),
+
                 }
             };
         }

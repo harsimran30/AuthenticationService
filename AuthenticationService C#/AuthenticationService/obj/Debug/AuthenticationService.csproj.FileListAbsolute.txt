@@ -42,3 +42,21 @@ C:\Users\mmosh\Desktop\Moshe Files\JWTTuts\AuthenticationService C#\Authenticati
 C:\Users\mmosh\Desktop\Moshe Files\JWTTuts\AuthenticationService C#\AuthenticationService\obj\Debug\AuthenticationService.csproj.CopyComplete
 C:\Users\mmosh\Desktop\Moshe Files\JWTTuts\AuthenticationService C#\AuthenticationService\obj\Debug\AuthenticationService.exe
 C:\Users\mmosh\Desktop\Moshe Files\JWTTuts\AuthenticationService C#\AuthenticationService\obj\Debug\AuthenticationService.pdb
+C:\Users\harsi\Documents\PluralSight\GitHub\AuthenticationService\AuthenticationService C#\AuthenticationService\bin\Debug\AuthenticationService.exe.config
+C:\Users\harsi\Documents\PluralSight\GitHub\AuthenticationService\AuthenticationService C#\AuthenticationService\bin\Debug\AuthenticationService.exe
+C:\Users\harsi\Documents\PluralSight\GitHub\AuthenticationService\AuthenticationService C#\AuthenticationService\bin\Debug\AuthenticationService.pdb
+C:\Users\harsi\Documents\PluralSight\GitHub\AuthenticationService\AuthenticationService C#\AuthenticationService\bin\Debug\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\harsi\Documents\PluralSight\GitHub\AuthenticationService\AuthenticationService C#\AuthenticationService\bin\Debug\Microsoft.IdentityModel.Logging.dll
+C:\Users\harsi\Documents\PluralSight\GitHub\AuthenticationService\AuthenticationService C#\AuthenticationService\bin\Debug\Microsoft.IdentityModel.Tokens.dll
+C:\Users\harsi\Documents\PluralSight\GitHub\AuthenticationService\AuthenticationService C#\AuthenticationService\bin\Debug\Newtonsoft.Json.dll
+C:\Users\harsi\Documents\PluralSight\GitHub\AuthenticationService\AuthenticationService C#\AuthenticationService\bin\Debug\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\harsi\Documents\PluralSight\GitHub\AuthenticationService\AuthenticationService C#\AuthenticationService\bin\Debug\Microsoft.IdentityModel.JsonWebTokens.xml
+C:\Users\harsi\Documents\PluralSight\GitHub\AuthenticationService\AuthenticationService C#\AuthenticationService\bin\Debug\Microsoft.IdentityModel.Logging.xml
+C:\Users\harsi\Documents\PluralSight\GitHub\AuthenticationService\AuthenticationService C#\AuthenticationService\bin\Debug\Microsoft.IdentityModel.Tokens.xml
+C:\Users\harsi\Documents\PluralSight\GitHub\AuthenticationService\AuthenticationService C#\AuthenticationService\bin\Debug\Newtonsoft.Json.xml
+C:\Users\harsi\Documents\PluralSight\GitHub\AuthenticationService\AuthenticationService C#\AuthenticationService\bin\Debug\System.IdentityModel.Tokens.Jwt.xml
+C:\Users\harsi\Documents\PluralSight\GitHub\AuthenticationService\AuthenticationService C#\AuthenticationService\obj\Debug\AuthenticationService.csprojAssemblyReference.cache
+C:\Users\harsi\Documents\PluralSight\GitHub\AuthenticationService\AuthenticationService C#\AuthenticationService\obj\Debug\AuthenticationService.csproj.CoreCompileInputs.cache
+C:\Users\harsi\Documents\PluralSight\GitHub\AuthenticationService\AuthenticationService C#\AuthenticationService\obj\Debug\AuthenticationService.csproj.CopyComplete
+C:\Users\harsi\Documents\PluralSight\GitHub\AuthenticationService\AuthenticationService C#\AuthenticationService\obj\Debug\AuthenticationService.exe
+C:\Users\harsi\Documents\PluralSight\GitHub\AuthenticationService\AuthenticationService C#\AuthenticationService\obj\Debug\AuthenticationService.pdb
