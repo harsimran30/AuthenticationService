@@ -1,14 +1,18 @@
 {
   "name": "authenticationservice-nodejs",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "JWT authentication service sample",
+  "main": "Main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node Main.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "jsonwebtoken": "^8.3.0"
+    "jsonwebtoken": "^9.0.2"
   }
 }

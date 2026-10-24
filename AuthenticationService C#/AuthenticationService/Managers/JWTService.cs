@@ -17,10 +17,9 @@ namespace AuthenticationService.Managers
         /// </summary>
         public string SecretKey { get; set; }
 
-        X509Certificate2 certificate = new X509Certificate2(@"C:\Users\harsi\Desktop\Azure - CDH\privatekey-9650.pfx", "Pass-123", X509KeyStorageFlags.PersistKeySet);
+        private readonly X509Certificate2 certificate = CertificateLoader.Load();
 
-        //JwtSecurityTokenHandler jwtSecurityTokenHandler = new JwtSecurityTokenHandler();
-        JsonWebTokenHandler jsontoken = new JsonWebTokenHandler();
+        private readonly JsonWebTokenHandler jsontoken = new JsonWebTokenHandler();
 
         #endregion
 
@@ -46,12 +45,16 @@ namespace AuthenticationService.Managers
             TokenValidationParameters tokenValidationParameters = GetTokenValidationParameters();
             try
             {
-                ClaimsPrincipal tokenValid = jwtSecurityTokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
-                //var valid = jsontoken.ValidateToken(token, tokenValidationParameters);
+                jwtSecurityTokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
                 return true;
             }
-            catch (Exception)
+            catch (SecurityTokenException)
             {
+                return false;
+            }
+            catch (ArgumentException)
+            {
+                // Malformed token (not a well-formed JWT).
                 return false;
             }
         }
@@ -74,18 +77,13 @@ namespace AuthenticationService.Managers
                 Audience = "Audience",
                 Issuer = "Issuer",
                 AdditionalHeaderClaims = new Dictionary<string, object>() { { "x5ts", SecretKey } },
-                NotBefore = DateTime.Now,
-                Expires = DateTime.Now.AddMinutes(Convert.ToInt32(model.ExpireMinutes)),
+                NotBefore = DateTime.UtcNow,
+                Expires = DateTime.UtcNow.AddMinutes(model.ExpireMinutes),
                 Subject = new ClaimsIdentity(model.Claims),
                 SigningCredentials = new SigningCredentials(GetPrivateKeyfromCertificate(), model.SecurityAlgorithm)
             };
 
-            //var securityToken = jwtSecurityTokenHandler.CreateToken(securityTokenDescriptor);
-            //string token = jwtSecurityTokenHandler.WriteToken(securityToken);
-
-            var token = jsontoken.CreateToken(securityTokenDescriptor);
-
-            return token;
+            return jsontoken.CreateToken(securityTokenDescriptor);
         }
 
         /// <summary>
@@ -102,16 +100,9 @@ namespace AuthenticationService.Managers
                 throw new ArgumentException("Given token is null or empty.");
 
             TokenValidationParameters tokenValidationParameters = GetTokenValidationParameters();
-            try
-            {
-                //ClaimsPrincipal tokenValid = jwtSecurityTokenHandler.ValidateToken(token, tokenValidationParameters, out SecurityToken validatedToken);
-                var tokenValid = jsontoken.ValidateToken(token, tokenValidationParameters);
-                return tokenValid.ClaimsIdentity.Claims;
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+            // Throws if the token is invalid; the original exception (and stack trace) is preserved.
+            var tokenValid = jsontoken.ValidateToken(token, tokenValidationParameters);
+            return tokenValid.ClaimsIdentity.Claims;
         }
         #endregion
 

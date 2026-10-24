@@ -24,8 +24,8 @@ namespace AuthenticationService
                 Console.WriteLine();
                 List<Claim> claims = authService.GetTokenClaims(token).ToList();
 
-                Console.WriteLine(claims.FirstOrDefault(e => e.Type.Equals(ClaimTypes.GivenName)).Value);
-                Console.WriteLine(claims.FirstOrDefault(e => e.Type.Equals(ClaimTypes.Email)).Value);
+                Console.WriteLine(claims.FirstOrDefault(e => e.Type.Equals(ClaimTypes.GivenName))?.Value);
+                Console.WriteLine(claims.FirstOrDefault(e => e.Type.Equals(ClaimTypes.Email))?.Value);
                 Console.ReadLine();
             }
         }

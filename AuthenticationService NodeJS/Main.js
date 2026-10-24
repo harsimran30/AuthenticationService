@@ -1,15 +1,20 @@
 var { JWTService } = require('./JWTService');
 
+// The signing secret must come from the environment, never from source control.
+// e.g. (PowerShell)  $env:JWT_SECRET = "<long random value>"
 function getConfigurations(dataModel) {
-    const configurations = {
+    const secretKey = process.env.JWT_SECRET;
+    if (!secretKey) {
+        throw new Error('Environment variable JWT_SECRET is not set.');
+    }
+
+    return {
         data: dataModel,
-        secretKey: 'TW9zaGVFcmV6UHJpdmF0ZUtleQ==',
-        expireDate: {
+        secretKey: secretKey,
+        signOptions: {
             expiresIn: '7d'
         }
     };
-
-    return configurations;
 }
 
 (function main() {
@@ -24,13 +29,13 @@ function getConfigurations(dataModel) {
 
         const token = jwtService.generateToken(configurations);
 
-        if (!jwtService.isTokenValid(token, configurations.secretKey)) {
+        if (!jwtService.isTokenValid(token)) {
             throw new Error('Given token is not valid.');
-        } else {
-            const data = jwtService.getTokenData(token, configurations.secretKey);
-            console.log(data);
         }
+
+        console.log(jwtService.getTokenData(token));
     } catch (ex) {
         console.error(ex);
+        process.exitCode = 1;
     }
 })();

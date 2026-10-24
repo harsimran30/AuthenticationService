@@ -1,0 +1,14 @@
+# Visual Studio / build output
+.vs/
+[Bb]in/
+[Oo]bj/
+*.user
+*.suo
+# NuGet packages are restored from packages.config
+packages/
+# Node
+node_modules/
+# Secrets
+*.pfx
+*.p12
+.env

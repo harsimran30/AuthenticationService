@@ -9,3 +9,14 @@ C# Article: https://medium.com/@mmoshikoo/jwt-authentication-using-c-54e0c71f21b
 NodeJS Article: https://medium.com/@mmoshikoo/jwt-authentication-using-nodejs-82a1d8fb8648
 
 Enjoy.
+
+## Configuration (secrets are not stored in the repo)
+
+**C#** - the signing certificate is read from environment variables:
+
+| Variable | Purpose |
+| --- | --- |
+| `JWT_CERT_PATH` | Full path to the `.pfx` file |
+| `JWT_CERT_PASSWORD` | Password of the `.pfx` file |
+
+**NodeJS** - `JWT_SECRET` must be set. Run with `npm install`, `npm start`; tests with `npm test` (Node 18+).

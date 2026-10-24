@@ -1,5 +1,5 @@
 ﻿using System.Security.Claims;
-using System.Security.Cryptography.X509Certificates;
+using AuthenticationService.Managers;
 using Microsoft.IdentityModel.Tokens;
 
 namespace AuthenticationService.Models
@@ -8,14 +8,14 @@ namespace AuthenticationService.Models
     {
         #region Public Methods
         public int ExpireMinutes { get; set; } = 60; // 1 hour.
-        public string SecretKey { get; set; } = GetThumbPrint(); // This secret key should be moved to some configurations outter server.
+        public string SecretKey { get; set; } = GetThumbPrint(); // Thumbprint of the signing certificate (see CertificateLoader).
 
         private static string GetThumbPrint()
         {
-            X509Certificate2 x509 = new X509Certificate2(@"C:\Users\harsi\Desktop\Azure - CDH\privatekey-9650.pfx", "Pass-123",   X509KeyStorageFlags.PersistKeySet);
-            return x509.Thumbprint;
+            using (var x509 = CertificateLoader.Load())
+                return x509.Thumbprint;
         }
-        
+
         public string SecurityAlgorithm { get; set; } = SecurityAlgorithms.RsaSha256;
 
         public Claim[] Claims { get; set; }
