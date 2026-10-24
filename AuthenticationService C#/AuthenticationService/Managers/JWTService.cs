@@ -100,9 +100,12 @@ namespace AuthenticationService.Managers
                 throw new ArgumentException("Given token is null or empty.");
 
             TokenValidationParameters tokenValidationParameters = GetTokenValidationParameters();
-            // Throws if the token is invalid; the original exception (and stack trace) is preserved.
-            var tokenValid = jsontoken.ValidateToken(token, tokenValidationParameters);
-            return tokenValid.ClaimsIdentity.Claims;
+            // JsonWebTokenHandler reports failure through the result rather than by throwing.
+            var result = jsontoken.ValidateToken(token, tokenValidationParameters);
+            if (!result.IsValid)
+                throw new SecurityTokenException("Token validation failed.", result.Exception);
+
+            return result.ClaimsIdentity.Claims;
         }
         #endregion
 
